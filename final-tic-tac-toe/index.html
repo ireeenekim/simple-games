@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Tic Tac Toe</h1>
+  <div class="toggle-container">
+    <span class="toggle-label">Play Against Opponent</span>
+    <label class="switch">
+      <input type="checkbox" id="playAgainstAI">
+      <span class="slider round"></span>
+    </label>
+    <span class="toggle-label">Play Against AI</span>
+  </div>
+  <div class="board" id="board">
+    <div class="cell" data-cell></div>
+    <div class="cell" data-cell></div>
+    <div class="cell" data-cell></div>
+    <div class="cell" data-cell></div>
+    <div class="cell" data-cell></div>
+    <div class="cell" data-cell></div>
+    <div class="cell" data-cell></div>
+    <div class="cell" data-cell></div>
+    <div class="cell" data-cell></div>
+  </div>
+  <button id="restartButton">Restart Game</button>
+  <div id="modal">
+    <div id="modalContent">
+      <p></p>
+      <button id="closeModal">OK</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
