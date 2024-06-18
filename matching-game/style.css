@@ -1,44 +1,195 @@
+/* Import a handwriting-like font */
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+/* Center the game container */
 body {
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f4f4f4;
-  margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #FAF0E6;
+    /* Really light tan color */
+    margin: 0;
+    padding: 0;
+    font-family: 'Patrick Hand', cursive;
 }
 
+/* Header container for title and scoreboard */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 1200px;
+    /* Match the width of .game-container */
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #D2B48C;
+    /* Tan color */
+    border: 2px solid #8B4513;
+    /* Dark brown border color */
+    border-radius: 10px;
+    box-shadow: none;
+    /* Remove the shadow */
+    position: relative;
+}
+
+/* Title styling */
+.game-title {
+    font-size: 48px;
+    /* Increased font size */
+    color: #8B4513;
+    /* Dark brown color */
+    margin: 0;
+    text-align: center;
+    flex-grow: 1;
+    /* Ensure the title takes up available space for centering */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Scoreboard styling */
+.scoreboard {
+    font-size: 30px;
+    /* Increased font size for score */
+    color: #8B4513;
+    /* Dark brown color */
+    background-color: #fff;
+    padding: 10px 20px;
+    /* Increased padding for a wider size */
+    border: 2px solid #8B4513;
+    /* Dark brown border color */
+    border-radius: 10px;
+    margin: 0 10px;
+    /* Add margin on the sides */
+    width: 150px;
+    /* Increased width */
+    text-align: center;
+    /* Center the text */
+    align-self: flex-end;
+    /* Align at the bottom of the header */
+}
+
+/* Game container styling */
 .game-container {
-  width: 800px;
-  height: 600px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  position: relative;
-  overflow: hidden;
+    width: 1200px;
+    height: 800px;
+    position: relative;
+    border: 2px solid #8B4513;
+    /* Dark brown border color */
+    background: url('wood.jpg') no-repeat center center;
+    /* Background image */
+    background-size: cover;
+    /* Cover the entire container */
+    margin-top: 20px;
+    border-radius: 10px;
 }
 
-.card {
-  width: 100px;
-  height: 100px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5rem;
-  cursor: pointer;
-  position: absolute;
+/* Style for puzzle pieces */
+.puzzle-piece {
+    width: 200px;
+    height: 150px;
+    background: white;
+    border: 2px solid #8B4513;
+    /* Dark brown border color */
+    border-radius: 10px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    user-select: none;
+    padding: 10px;
 }
 
-.popup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #fff;
-  padding: 20px;
-  border: 2px solid #ccc;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
+/* Ensure content within puzzle pieces is centered */
+.puzzle-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.puzzle-content-horizontal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+/* Add styles for rows */
+.row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+/* Adjust shape size for larger apples */
+.shape {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+    flex: 0 0 auto;
+}
+
+/* Style for operators and numbers */
+.equation-part {
+    font-size: 36px;
+    /* Increased font size */
+    font-weight: bold;
+    text-align: center;
+    color: #8B4513;
+    /* Dark brown color */
+}
+
+/* Style for operators */
+.operator {
+    margin: 0 5px;
+}
+
+/* Popup styling */
+#popup {
+    display: none;
+    position: absolute;
+    padding: 20px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    text-align: center;
+}
+
+/* Button styling */
+button {
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+
+    .header,
+    .game-container {
+        width: 100%;
+        height: auto;
+        max-height: 100vh;
+        margin: 20px;
+    }
+
+    .puzzle-piece {
+        width: calc(50% - 40px);
+        height: auto;
+        margin: 10px;
+    }
+
+    .shape {
+        width: 30px;
+        height: 30px;
+    }
 }
