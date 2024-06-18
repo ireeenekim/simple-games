@@ -21,7 +21,6 @@ function initGame() {
     zIndexCounter = 1000;
     gameFinished = false;
     score = 0;
-    updateScore();
 
     const { problems, answers } = generateProblemsAndSolutions(numPairs);
     const positions = generateRandomPositions(gameContainer, numPairs * 2);
@@ -62,6 +61,7 @@ function createProblemHTML(problem) {
             <div class="equation-part">${left}</div>
             <div class="equation-part operator">${operator}</div>
             <div class="equation-part">${right}</div>
+            <div class="equation-part operator">=</div> <!-- Added equal sign -->
         </div>
     `;
 }
@@ -70,6 +70,8 @@ function createAnswerHTML(answer) {
     const apples = organizeInRows(parseInt(answer, 10), appleImagePath);
     return `<div class="puzzle-content">${apples}</div>`;
 }
+
+
 
 function organizeInRows(count, imagePath) {
     const apples = [];
