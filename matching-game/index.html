@@ -4,15 +4,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Math Card Matching Game</title>
+  <title>Matching Game</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+  <div class="header">
+    <h1 class="game-title">Matching Game</h1>
+    <div class="scoreboard">
+      <p>Score: <span id="score">0</span></p>
+    </div>
+  </div>
+
   <div class="game-container">
     <div id="problems"></div>
     <div id="answers"></div>
   </div>
+
   <div id="popup" class="popup">
     <p>Congratulations! All cards matched!</p>
     <button onclick="resetGame()">Play Again</button>
