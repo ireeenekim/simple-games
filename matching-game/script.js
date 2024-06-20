@@ -7,6 +7,7 @@ let gameFinished = false;
 const numPairs = 5;
 const appleImagePath = 'apple.png';
 let score = 0;
+let isMatching = false; // Track if a match is being processed
 
 window.onload = function() {
     initGame();
@@ -47,9 +48,28 @@ function createCard(content, answer, id, type, left, top) {
     card.style.top = `${top}px`;
     card.style.zIndex = zIndexCounter++;
 
-    card.innerHTML = type === 'problem' ? createProblemHTML(content) : createAnswerHTML(content);
+    card.innerHTML = type === 'problem' ? createProblemHTML(content) : createAnswerHTML(answer);
 
     card.onmousedown = dragStart;
+    card.onclick = () => {
+        if (!isMatching) { // Prevent reading if a match is being processed
+            if (card.dataset.paired === 'true') {
+                const pairedCard = pairs[card.id];
+                if (pairedCard) {
+                    // If the clicked card is part of a matched pair, read the full equation
+                    const problemCard = card.dataset.type === 'problem' ? card : pairedCard;
+                    const answerCard = card.dataset.type === 'answer' ? card : pairedCard;
+                    const problem = formatEquationForSpeech(problemCard.innerText.trim().split('=').slice(0, -1).join(' equals '));
+                    const answer = answerCard.dataset.answer;
+                    const equationText = `${problem} equals ${formatAnswerForSpeech(answer)}`;
+                    speakText(equationText);
+                }
+            } else {
+                // Otherwise, read the individual card's text
+                speakText(type === 'problem' ? formatEquationForSpeech(content) : formatAnswerForSpeech(answer));
+            }
+        }
+    };
 
     document.querySelector('.game-container').appendChild(card);
 }
@@ -71,8 +91,6 @@ function createAnswerHTML(answer) {
     return `<div class="puzzle-content">${apples}</div>`;
 }
 
-
-
 function organizeInRows(count, imagePath) {
     const apples = [];
     for (let i = 0; i < count; i++) {
@@ -83,6 +101,25 @@ function organizeInRows(count, imagePath) {
         rows.push(`<div class="row">${apples.splice(0, 5).join('')}</div>`); // 5 apples per row
     }
     return rows.join('');
+}
+
+function formatEquationForSpeech(equation) {
+    // Replace '-' with 'minus', '+' with 'plus', '=' with 'equals'
+    return equation.replace('-', ' minus ').replace('+', ' plus ').replace('=', ' equals');
+}
+
+function formatAnswerForSpeech(answer) {
+    // Format the answer text to handle singular and plural cases
+    const count = parseInt(answer, 10);
+    return `${count} ${count === 1 ? 'apple' : 'apples'}`;
+}
+
+function speakText(text, onEndCallback = null) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (onEndCallback) {
+        utterance.onend = onEndCallback;
+    }
+    speechSynthesis.speak(utterance);
 }
 
 function dragStart(event) {
@@ -160,8 +197,8 @@ function dragEnd(event) {
     cards.forEach(otherCard => {
         if (otherCard !== currentElement && !matchedCards.has(otherCard.id) && checkProximity(currentElement, otherCard)) {
             if (checkMatch(currentElement, otherCard)) {
-                snapTogether(currentElement, otherCard);
                 matched = true;
+                snapTogether(currentElement, otherCard);
             }
         }
     });
@@ -193,6 +230,8 @@ function checkMatch(card1, card2) {
 }
 
 function snapTogether(card1, card2) {
+    isMatching = true; // Indicate that a match is being processed
+
     const gameContainer = document.querySelector('.game-container').getBoundingClientRect();
     const problemCard = card1.dataset.type === 'problem' ? card1 : card2;
     const answerCard = card1.dataset.type === 'answer' ? card1 : card2;
@@ -225,11 +264,22 @@ function snapTogether(card1, card2) {
     pairs[answerCard.id] = problemCard;
 
     matchedPairs++;
-    score++;
-    updateScore(); // Update the score on match
     if (matchedPairs === numPairs) {
-        showPopup();
+        // Read the complete matched equation and then show the popup
+        const problem = formatEquationForSpeech(problemCard.innerText.trim().split('=').slice(0, -1).join(' equals '));
+        const answer = answerCard.dataset.answer;
+        const equationText = `${problem} equals ${formatAnswerForSpeech(answer)}`;
+        speakText(equationText, showPopup);
+    } else {
+        // Read the complete matched equation
+        const problem = formatEquationForSpeech(problemCard.innerText.trim().split('=').slice(0, -1).join(' equals '));
+        const answer = answerCard.dataset.answer;
+        const equationText = `${problem} equals ${formatAnswerForSpeech(answer)}`;
+        speakText(equationText);
     }
+
+    // Allow subsequent text-to-speech after a brief delay to prevent overlapping announcements
+    setTimeout(() => isMatching = false, 1000);
 }
 
 function ensureInView(card, container) {
@@ -272,7 +322,6 @@ function resetGame() {
     pairs = {};
     gameFinished = false;
     score = 0; // Reset score
-    updateScore();
     initGame();
 }
 
@@ -334,8 +383,4 @@ function isOverlapping(pos1, pos2, width, height) {
         pos1.top < pos2.top + height &&
         pos1.top + height > pos2.top
     );
-}
-
-function updateScore() {
-    document.getElementById('score').innerText = score;
 }
