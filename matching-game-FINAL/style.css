@@ -1,0 +1,255 @@
+/* CSS */
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+  margin: 0;
+}
+
+.game-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-left: 0;
+  /* Move header to the left */
+}
+
+.character-container {
+  margin-right: 5px;
+}
+
+.character {
+  height: 60px;
+  width: auto;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 5px;
+  text-align: left;
+  margin-left: 5px;
+}
+
+.title-green {
+  color: #3BA23F;
+  /* Green color */
+}
+
+.title-red {
+  color: #C82E2F;
+  /* Red color */
+}
+
+.title-line {
+  border: 0;
+  border-top: 2px solid #FFD700;
+  /* Yellow color */
+  margin: 0 0 20px 0;
+  /* Adjusted to align with the yellow line */
+}
+
+.main-content {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.puzzle-board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(4, 100px);
+  gap: 0;
+  /* Remove gaps between tiles */
+  border: 10px solid #D63384;
+  /* Thicker and darker pink border */
+  padding: 0;
+  border-collapse: collapse;
+  margin-right: 10px;
+  /* Align with the yellow line */
+}
+
+.equation-tile,
+.answer-tile,
+.placeholder {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  width: 100px;
+  height: 100px;
+  transition: background-color 0.3s ease;
+  position: relative;
+  /* Allows positioning outline inside */
+}
+
+.equation-tile {
+  background-color: #fff;
+  position: relative;
+}
+
+.equation-tile.active {
+  outline: 2px solid lightblue;
+  /* Light blue outline */
+  outline-offset: -3px;
+  /* Moves outline inside the box */
+  background-color: #fff;
+  /* Ensure no background change */
+  z-index: 1;
+  /* Bring to front to ensure visibility */
+}
+
+.equation-tile.correct {
+  background-color: #f8c6dc;
+  /* Light pink */
+}
+
+.placeholder {
+  background-color: #f8c6dc;
+  /* Light pink */
+  cursor: default;
+}
+
+.answer-tiles {
+  display: grid;
+  grid-template-columns: repeat(5, 100px);
+  /* 5 columns */
+  grid-template-rows: repeat(2, 100px);
+  /* 2 rows */
+  gap: 10px;
+  justify-items: center;
+  align-items: center;
+  margin-left: 10px;
+  /* Adjusted to move the solution squares closer to the equation grid */
+  margin-top: auto;
+  /* Ensure alignment to the bottom of the equation grid */
+}
+
+/* Dragging styles */
+.answer-tile {
+  cursor: grab;
+  background-size: cover;
+  color: black;
+  text-shadow: 1px 1px 2px white;
+  /* Ensure text is readable over images */
+}
+
+.answer-tile.dragging {
+  opacity: 0.5;
+}
+
+.equation-tile.over {
+  outline: 2px dashed lightblue;
+  outline-offset: -3px;
+}
+
+/* For vertical equations */
+.vertical-equation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: monospace;
+  line-height: 1.1;
+  /* Adjust line height for vertical equations */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+  /* Align items at the top */
+  padding-top: 10px;
+  /* Adjust for more spacing at the top */
+}
+
+.vertical-equation .number.top {
+  margin-bottom: 2px;
+  /* Reduce gap between numbers */
+}
+
+.vertical-equation .number.bottom {
+  margin-top: 2px;
+  /* Reduce gap between numbers */
+}
+
+.vertical-equation .number.solution {
+  margin-top: 30px;
+  /* Adjust this value to bring the 52 downwards */
+}
+
+.vertical-equation .operator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 10px;
+  /* Adjust position slightly to the right */
+  top: 52px;
+  /* Position closer to bottom number */
+  transform: translateY(-50%);
+  /* Center vertically */
+  font-size: 24px;
+  /* Same size as numbers */
+}
+
+.vertical-equation .horizontal-line {
+  width: 80%;
+  /* Adjust to make the line shorter */
+  border-top: 1px solid black;
+  margin-top: 0;
+  /* Space below bottom number */
+  position: absolute;
+  bottom: 43px;
+  /* Adjusted to move the line down 2 pixels */
+  left: 10%;
+  /* Center the line horizontally */
+}
+
+/* For horizontal equations */
+.horizontal-equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  gap: 5px;
+  /* Add space between elements */
+}
+
+.display-equation {
+  padding: 0;
+  /* Remove padding */
+  margin: 0;
+  /* Remove margin */
+  background-color: transparent;
+  /* Transparent background */
+  text-align: center;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100px;
+  position: absolute;
+  top: 80px;
+  /* Position below the yellow line */
+  left: 50%;
+  /* Center horizontally above the solutions */
+  transform: translateX(-50%);
+  /* Center horizontally */
+  outline: none;
+  /* Remove any default outlines */
+}
+
+.answer-tile.correct {
+  background-color: #f8c6dc;
+  /* Light pink */
+}
