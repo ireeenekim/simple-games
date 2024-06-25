@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Matching Game</title>
+  <link rel="stylesheet" href="style.css"> <!-- Link to the CSS file -->
+</head>
+
+<body>
+  <div class="game-container">
+    <div class="header">
+      <div class="character-container">
+        <img src="character.png" alt="Character" class="character">
+      </div>
+      <h1>
+        <span class="title-green">그림 맞추기 놀이</span>
+        <span class="title-red">를 해요.</span>
+      </h1>
+    </div>
+    <hr class="title-line">
+    <div class="main-content">
+      <div class="puzzle-board">
+        <!-- Equation Tiles -->
+        <div class="equation-tile" id="equation-1" data-equation="52">
+          <div class="vertical-equation">
+            <div class="number top">41</div>
+            <div class="operator">+</div>
+            <div class="number bottom">11</div>
+            <div class="horizontal-line"></div>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-2" style="background-image: url('2.jpg'); background-size: cover;"
+          data-equation="">
+          <!-- Initially empty for image 2.jpg -->
+        </div>
+        <div class="equation-tile" id="equation-3" data-equation="46">
+          <div class="horizontal-equation">
+            <span>20</span>
+            <span>+</span>
+            <span>26</span>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-4" data-equation="17">
+          <div class="horizontal-equation">
+            <span>32</span>
+            <span>-</span>
+            <span>15</span>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-5" data-equation="43">
+          <div class="vertical-equation">
+            <div class="number top">27</div>
+            <div class="operator">+</div>
+            <div class="number bottom">16</div>
+            <div class="horizontal-line"></div>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-6" data-equation="10">
+          <div class="horizontal-equation">
+            <span>80</span>
+            <span>-</span>
+            <span>70</span>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-7" style="background-image: url('7.jpg'); background-size: cover;"
+          data-equation="">
+          <!-- Initially empty for image 7.jpg -->
+        </div>
+        <div class="equation-tile" id="equation-8" data-equation="8">
+          <div class="horizontal-equation">
+            <span>19</span>
+            <span>-</span>
+            <span>11</span>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-9" data-equation="50">
+          <div class="horizontal-equation">
+            <span>17</span>
+            <span>+</span>
+            <span>33</span>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-10" data-equation="101">
+          <div class="vertical-equation">
+            <div class="number top">60</div>
+            <div class="operator">+</div>
+            <div class="number bottom">41</div>
+            <div class="horizontal-line"></div>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-11" data-equation="60">
+          <div class="horizontal-equation">
+            <span>60</span>
+            <span>+</span>
+            <span>0</span>
+          </div>
+        </div>
+        <div class="equation-tile" id="equation-12" data-equation="9">
+          <div class="horizontal-equation">
+            <span>20</span>
+            <span>-</span>
+            <span>11</span>
+          </div>
+        </div>
+      </div>
+      <div class="answer-tiles">
+        <!-- Answer Tiles -->
+        <div class="answer-tile" id="answer-1" data-answer="52"
+          style="background-image: url('1.jpg'); background-size: cover;">52</div>
+        <div class="answer-tile" id="answer-2" data-answer="46"
+          style="background-image: url('2.jpg'); background-size: cover;">46</div>
+        <div class="answer-tile" id="answer-3" data-answer="17"
+          style="background-image: url('3.jpg'); background-size: cover;">17</div>
+        <div class="answer-tile" id="answer-4" data-answer="43"
+          style="background-image: url('4.jpg'); background-size: cover;">43</div>
+        <div class="answer-tile" id="answer-5" data-answer="10"
+          style="background-image: url('5.jpg'); background-size: cover;">10</div>
+        <div class="answer-tile" id="answer-6" data-answer="8"
+          style="background-image: url('6.jpg'); background-size: cover;">8</div>
+        <div class="answer-tile" id="answer-7" data-answer="50"
+          style="background-image: url('7.jpg'); background-size: cover;">50</div>
+        <div class="answer-tile" id="answer-8" data-answer="101"
+          style="background-image: url('8.jpg'); background-size: cover;">101</div>
+        <div class="answer-tile" id="answer-9" data-answer="60"
+          style="background-image: url('9.jpg'); background-size: cover;">60</div>
+        <div class="answer-tile" id="answer-10" data-answer="9"
+          style="background-image: url('10.jpg'); background-size: cover;">9</div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script> <!-- Link to the JavaScript file -->
+</body>
+
+</html>
