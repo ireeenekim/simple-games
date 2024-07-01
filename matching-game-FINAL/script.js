@@ -8,14 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     displayEquationContainer.style.display = 'none'; // Hide initially
 
-    // Add unique IDs to answer tiles if they don't already have one
     answerTiles.forEach((tile, index) => {
         if (!tile.id) {
             tile.id = `answer-tile-${index + 1}`;
         }
     });
 
-    // Map images to answer tiles
     const imageMap = {
         "52": "url('1.jpg')",
         "46": "url('3.jpg')",
@@ -29,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "9": "url('12.jpg')"
     };
 
-    // Set background images for answer tiles
     answerTiles.forEach(tile => {
         const answerValue = tile.getAttribute("data-answer");
         if (imageMap[answerValue]) {
@@ -39,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Shuffle the answer tiles
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -47,18 +43,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Convert NodeList to array for shuffling
     const answerTileArray = Array.from(answerTiles);
     shuffleArray(answerTileArray);
 
-    // Append shuffled tiles to answer-tiles container
     const answerTilesContainer = document.querySelector('.answer-tiles');
-    answerTilesContainer.innerHTML = ''; // Clear current order
+    answerTilesContainer.innerHTML = '';
     answerTileArray.forEach(tile => {
         answerTilesContainer.appendChild(tile);
     });
 
-    // Disable interaction for specific equation tiles
     const disableTileIds = ["equation-2", "equation-7"];
     disableTileIds.forEach(id => {
         const tile = document.getElementById(id);
@@ -72,45 +65,76 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    function showCarrying(equation, correctAnswer, color = 'green') {
+        const topNumElement = equation.querySelector('.number.top');
+        const bottomNumElement = equation.querySelector('.number.bottom');
+        const operatorElement = equation.querySelector('.operator');
+
+        if (topNumElement && bottomNumElement && operatorElement) {
+            const topNum = topNumElement.innerText;
+            const bottomNum = bottomNumElement.innerText;
+            const operator = operatorElement.innerText;
+
+            if (operator === '+') {
+                const topDigits = topNum.split('').reverse();
+                const bottomDigits = bottomNum.split('').reverse();
+                let carry = 0;
+                let carryHtml = '';
+                let carried = false;
+
+                topDigits.forEach((digit, index) => {
+                    const sum = parseInt(digit) + parseInt(bottomDigits[index] || 0) + carry;
+                    if (sum >= 10) {
+                        carryHtml = `<div class="carry">1</div>` + carryHtml;
+                        carry = 1;
+                        carried = true;
+                    } else {
+                        carry = 0;
+                    }
+                });
+
+                displayEquationContainer.innerHTML = `
+          <div class="horizontal-equation-popup" style="font-size: 24px; line-height: 1.1; color: ${color}; white-space: nowrap;">
+            ${topNum} ${operator} ${bottomNum} = <span style="color: ${color};">${correctAnswer}</span>
+          </div>`;
+            }
+        }
+    }
+
     equationTiles.forEach(tile => {
         if (!disableTileIds.includes(tile.id)) {
             tile.addEventListener("click", (event) => {
-                event.stopPropagation(); // Prevent click from propagating to document
+                event.stopPropagation();
                 if (!tile.classList.contains("placeholder")) {
                     equationTiles.forEach(t => t.classList.remove("active"));
-                    equationTiles.forEach(t => t.style.outline = ''); // Remove outlines from all tiles
+                    equationTiles.forEach(t => t.style.outline = '');
                     answerTiles.forEach(t => t.classList.remove("correct"));
 
                     selectedEquation = tile;
                     tile.classList.add("active");
 
-                    // Display the equation in the fixed section
                     displayEquationContainer.style.display = 'flex';
                     displayEquationContainer.innerHTML = selectedEquation.innerHTML;
 
-                    // Adjust position to be above the solution grid
                     const solutionGrid = document.querySelector('.answer-tiles');
                     const solutionGridRect = solutionGrid.getBoundingClientRect();
                     const mainContentRect = document.querySelector('.main-content').getBoundingClientRect();
 
-                    // Position displayEquationContainer relative to solutionGrid
                     displayEquationContainer.style.top = `${solutionGridRect.top - mainContentRect.top - displayEquationContainer.clientHeight - 20}px`;
                     displayEquationContainer.style.left = `${solutionGridRect.left + solutionGridRect.width / 2 - displayEquationContainer.clientWidth / 2}px`;
 
-                    // Ensure the outline is a complete square
                     displayEquationContainer.style.position = 'absolute';
-                    displayEquationContainer.style.border = 'none'; // Remove border
+                    displayEquationContainer.style.border = 'none';
 
-                    // Match the alignment for vertical equations
-                    if (selectedEquation.querySelector('.vertical-equation')) {
+                    const verticalEquation = selectedEquation.querySelector('.vertical-equation');
+                    if (verticalEquation) {
                         displayEquationContainer.innerHTML = '';
-                        const clonedEquation = selectedEquation.querySelector('.vertical-equation').cloneNode(true);
+                        const clonedEquation = verticalEquation.cloneNode(true);
                         displayEquationContainer.appendChild(clonedEquation);
                     }
                 }
             });
 
-            // Drag and drop logic for equation tiles
             tile.addEventListener("dragover", (e) => {
                 e.preventDefault();
                 tile.classList.add("over");
@@ -137,10 +161,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (correctAnswer === selectedAnswer) {
                     tile.classList.add("correct");
-                    tile.style.backgroundColor = "#f8c6dc"; // Light pink
+                    tile.style.backgroundColor = "#f8c6dc";
 
-                    // Snap solution card on top of the equation card
-                    draggedElement.style.display = "none"; // Hide the answer tile
+                    const placeholder = document.createElement('div');
+                    placeholder.classList.add('placeholder');
+                    placeholder.style.width = '100px';
+                    placeholder.style.height = '100px';
+                    placeholder.style.border = '1px solid white';
+                    placeholder.style.boxSizing = 'border-box';
+                    placeholder.style.backgroundColor = 'white';
+                    draggedElement.parentNode.replaceChild(placeholder, draggedElement);
+
                     tile.appendChild(draggedElement);
                     draggedElement.classList.add("correct");
                     draggedElement.style.position = "absolute";
@@ -149,35 +180,83 @@ document.addEventListener("DOMContentLoaded", () => {
                     draggedElement.style.width = "100%";
                     draggedElement.style.height = "100%";
 
-                    // Set the background image
                     tile.style.backgroundImage = draggedElement.style.backgroundImage;
                     tile.style.backgroundSize = 'cover';
 
-                    // Display the full equation
-                    const equationParts = tile.textContent.split(/[\s\+\-\=]/).filter(Boolean);
+                    const equationParts = tile.innerText.split(/[\s\+\-\=]/).filter(Boolean);
                     if (equationParts.length >= 2) {
                         const [num1, num2] = equationParts;
-                        const operator = tile.textContent.includes('+') ? '+' : '-';
+                        const operator = tile.innerText.includes('+') ? '+' : '-';
                         if (tile.querySelector('.vertical-equation')) {
-                            // For vertical equations
                             tile.innerHTML = `
-                                <div class="vertical-equation" style="font-size: 24px; line-height: 1.1;">
-                                    <div class="number top">${num1}</div>
-                                    <div class="operator" style="left: 15px;">${operator}</div>
-                                    <div class="number bottom">${num2}</div>
-                                    <div class="horizontal-line"></div>
-                                    <div class="solution" style="font-size: 24px;">${correctAnswer}</div>
-                                </div>`;
+                <div class="vertical-equation" style="font-size: 24px; line-height: 1.1;">
+                  <div class="number top">${num1}</div>
+                  <div class="operator" style="left: 15px;">${operator}</div>
+                  <div class="number bottom">${num2}</div>
+                  <div class="horizontal-line"></div>
+                  <div class="solution" style="font-size: 24px; color: black;">${correctAnswer}</div>
+                </div>`;
+
+                            displayEquationContainer.innerHTML = `
+                <div class="vertical-equation-popup" style="font-size: 24px; line-height: 1.1; color: green;">
+                  <div class="number top">${num1}</div>
+                  <div class="operator" style="left: 15px;">${operator}</div>
+                  <div class="number bottom">${num2}</div>
+                  <div class="horizontal-line"></div>
+                  <div class="solution" style="font-size: 24px; color: green;">${correctAnswer}</div>
+                </div>`;
                         } else {
-                            // For horizontal equations
-                            const fullEquation = `${num1} ${operator} ${num2} = ${correctAnswer}`;
-                            tile.innerHTML = `<div style="font-size: 14px;">${fullEquation}</div>`;
+                            tile.innerHTML = `
+                <div class="horizontal-equation">
+                  ${num1} ${operator} ${num2} = ${correctAnswer}
+                </div>`;
+
+                            displayEquationContainer.innerHTML = `
+                <div class="horizontal-equation-popup" style="font-size: 24px; line-height: 1.1; color: green; white-space: nowrap;">
+                  ${num1} ${operator} ${num2} = <span style="color: green;">${correctAnswer}</span>
+                </div>`;
                         }
                     }
-                    draggedElement.classList.remove("correct");
                 } else {
-                    // If incorrect, return the answer tile to its original position
-                    draggedElement.style.display = ""; // Show the answer tile again
+                    const equation = tile.querySelector('.vertical-equation') || tile.querySelector('.horizontal-equation');
+                    if (equation) {
+                        displayEquationContainer.innerHTML = '';
+                        const incorrectEquation = equation.cloneNode(true);
+
+                        if (tile.querySelector('.horizontal-equation')) {
+                            const parts = incorrectEquation.innerText.split(/[\s\+\-\=]/).filter(Boolean);
+                            if (parts.length >= 2) {
+                                const [num1, num2] = parts;
+                                const operator = incorrectEquation.innerText.includes('+') ? '+' : '-';
+                                displayEquationContainer.innerHTML = `
+                  <div class="horizontal-equation-popup" style="font-size: 24px; line-height: 1.1; color: red; white-space: nowrap;">
+                    ${num1} ${operator} ${num2} = <span style="color: red;">${correctAnswer}</span>
+                  </div>`;
+                            }
+                        } else if (tile.querySelector('.vertical-equation')) {
+                            displayEquationContainer.innerHTML = `
+                <div class="vertical-equation-popup" style="font-size: 24px; line-height: 1.1; color: red;">
+                  <div class="number top">${tile.querySelector('.number.top').innerText}</div>
+                  <div class="operator" style="left: 15px;">${tile.querySelector('.operator').innerText}</div>
+                  <div class="number bottom">${tile.querySelector('.number.bottom').innerText}</div>
+                  <div class="horizontal-line"></div>
+                  <div class="solution" style="font-size: 24px; color: red;">${correctAnswer}</div>
+                </div>`;
+                        } else {
+                            displayEquationContainer.appendChild(incorrectEquation);
+                        }
+
+                        displayEquationContainer.style.display = 'flex';
+
+                        const solutionGrid = document.querySelector('.answer-tiles');
+                        const solutionGridRect = solutionGrid.getBoundingClientRect();
+                        const mainContentRect = document.querySelector('.main-content').getBoundingClientRect();
+
+                        displayEquationContainer.style.top = `${solutionGridRect.top - mainContentRect.top - displayEquationContainer.clientHeight - 20}px`;
+                        displayEquationContainer.style.left = `${solutionGridRect.left + solutionGridRect.width / 2 - displayEquationContainer.clientWidth / 2}px`;
+                    }
+
+                    draggedElement.style.display = "";
                 }
             });
         }
@@ -196,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         tile.addEventListener("click", (event) => {
-            event.stopPropagation(); // Prevent click from propagating to document
+            event.stopPropagation();
             if (selectedEquation) {
                 const correctAnswer = selectedEquation.getAttribute("data-equation");
                 const selectedAnswer = tile.getAttribute("data-answer");
@@ -204,10 +283,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (correctAnswer === selectedAnswer) {
                     selectedEquation.classList.remove("active");
                     selectedEquation.classList.add("correct");
-                    selectedEquation.style.backgroundColor = "#f8c6dc"; // Light pink
+                    selectedEquation.style.backgroundColor = "#f8c6dc";
 
-                    // Hide the answer tile and snap it on top of the equation tile
-                    tile.style.display = "none";
+                    const placeholder = document.createElement('div');
+                    placeholder.classList.add('placeholder');
+                    placeholder.style.width = '100px';
+                    placeholder.style.height = '100px';
+                    placeholder.style.border = '1px solid white';
+                    placeholder.style.boxSizing = 'border-box';
+                    placeholder.style.backgroundColor = 'white';
+                    tile.parentNode.replaceChild(placeholder, tile);
+
                     selectedEquation.appendChild(tile);
                     tile.style.position = "absolute";
                     tile.style.top = "0";
@@ -215,47 +301,92 @@ document.addEventListener("DOMContentLoaded", () => {
                     tile.style.width = "100%";
                     tile.style.height = "100%";
 
-                    // Set the background image
                     selectedEquation.style.backgroundImage = tile.style.backgroundImage;
                     selectedEquation.style.backgroundSize = 'cover';
 
-                    // Display the full equation
-                    const equationParts = selectedEquation.textContent.split(/[\s\+\-\=]/).filter(Boolean);
+                    const equationParts = selectedEquation.innerText.split(/[\s\+\-\=]/).filter(Boolean);
                     if (equationParts.length >= 2) {
                         const [num1, num2] = equationParts;
-                        const operator = selectedEquation.textContent.includes('+') ? '+' : '-';
+                        const operator = selectedEquation.innerText.includes('+') ? '+' : '-';
                         if (selectedEquation.querySelector('.vertical-equation')) {
-                            // For vertical equations
                             selectedEquation.innerHTML = `
-                                <div class="vertical-equation" style="font-size: 24px; line-height: 1.1;">
-                                    <div class="number top">${num1}</div>
-                                    <div class="operator" style="left: 15px;">${operator}</div>
-                                    <div class="number bottom">${num2}</div>
-                                    <div class="horizontal-line"></div>
-                                    <div class="solution" style="font-size: 24px;">${correctAnswer}</div>
-                                </div>`;
+                <div class="vertical-equation" style="font-size: 24px; line-height: 1.1;">
+                  <div class="number top">${num1}</div>
+                  <div class="operator" style="left: 15px;">${operator}</div>
+                  <div class="number bottom">${num2}</div>
+                  <div class="horizontal-line"></div>
+                  <div class="solution" style="font-size: 24px; color: black;">${correctAnswer}</div>
+                </div>`;
+
+                            displayEquationContainer.innerHTML = `
+                <div class="vertical-equation-popup" style="font-size: 24px; line-height: 1.1; color: green;">
+                  <div class="number top">${num1}</div>
+                  <div class="operator" style="left: 15px;">${operator}</div>
+                  <div class="number bottom">${num2}</div>
+                  <div class="horizontal-line"></div>
+                  <div class="solution" style="font-size: 24px; color: green;">${correctAnswer}</div>
+                </div>`;
                         } else {
-                            // For horizontal equations
-                            const fullEquation = `${num1} ${operator} ${num2} = ${correctAnswer}`;
-                            selectedEquation.innerHTML = `<div style="font-size: 14px;">${fullEquation}</div>`;
+                            selectedEquation.innerHTML = `
+                <div class="horizontal-equation">
+                  ${num1} ${operator} ${num2} = ${correctAnswer}
+                </div>`;
+
+                            displayEquationContainer.innerHTML = `
+                <div class="horizontal-equation-popup" style="font-size: 24px; line-height: 1.1; color: green; white-space: nowrap;">
+                  ${num1} ${operator} ${num2} = <span style="color: green;">${correctAnswer}</span>
+                </div>`;
                         }
+                    }
+                } else {
+                    const equation = selectedEquation.querySelector('.vertical-equation') || selectedEquation.querySelector('.horizontal-equation');
+                    if (equation) {
+                        displayEquationContainer.innerHTML = '';
+                        const incorrectEquation = equation.cloneNode(true);
+
+                        if (selectedEquation.querySelector('.horizontal-equation')) {
+                            const parts = incorrectEquation.innerText.split(/[\s\+\-\=]/).filter(Boolean);
+                            if (parts.length >= 2) {
+                                const [num1, num2] = parts;
+                                const operator = incorrectEquation.innerText.includes('+') ? '+' : '-';
+                                displayEquationContainer.innerHTML = `
+                  <div class="horizontal-equation-popup" style="font-size: 24px; line-height: 1.1; color: red; white-space: nowrap;">
+                    ${num1} ${operator} ${num2} = <span style="color: red;">${correctAnswer}</span>
+                  </div>`;
+                            }
+                        } else if (selectedEquation.querySelector('.vertical-equation')) {
+                            displayEquationContainer.innerHTML = `
+                <div class="vertical-equation-popup" style="font-size: 24px; line-height: 1.1; color: red;">
+                  <div class="number top">${selectedEquation.querySelector('.number.top').innerText}</div>
+                  <div class="operator" style="left: 15px;">${selectedEquation.querySelector('.operator').innerText}</div>
+                  <div class="number bottom">${selectedEquation.querySelector('.number.bottom').innerText}</div>
+                  <div class="horizontal-line"></div>
+                  <div class="solution" style="font-size: 24px; color: red;">${correctAnswer}</div>
+                </div>`;
+                        } else {
+                            displayEquationContainer.appendChild(incorrectEquation);
+                        }
+
+                        displayEquationContainer.style.display = 'flex';
+
+                        const solutionGrid = document.querySelector('.answer-tiles');
+                        const solutionGridRect = solutionGrid.getBoundingClientRect();
+                        const mainContentRect = document.querySelector('.main-content').getBoundingClientRect();
+
+                        displayEquationContainer.style.top = `${solutionGridRect.top - mainContentRect.top - displayEquationContainer.clientHeight - 20}px`;
+                        displayEquationContainer.style.left = `${solutionGridRect.left + solutionGridRect.width / 2 - displayEquationContainer.clientWidth / 2}px`;
                     }
                 }
             }
         });
     });
 
-    // Hide equation display and remove blue outline on clicking outside
     document.addEventListener("click", (event) => {
-        // Check if the click happened outside the equation grid and solution grid
         const equationGrid = document.querySelector(".puzzle-board");
         const solutionGrid = document.querySelector(".answer-tiles");
         if (!equationGrid.contains(event.target) && !solutionGrid.contains(event.target)) {
-            // Remove active class from all equation tiles
             equationTiles.forEach(t => t.classList.remove("active"));
-            equationTiles.forEach(t => t.style.outline = ''); // Remove outlines from all tiles
-
-            // Hide the displayed equation
+            equationTiles.forEach(t => t.style.outline = '');
             displayEquationContainer.style.display = 'none';
         }
     });
